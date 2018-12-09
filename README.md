@@ -32,4 +32,4 @@ npm run build
 ## 协议
 
 GPL-v3.0
-@wurahara
+[@wurahara](https://github.com/wurahara)
