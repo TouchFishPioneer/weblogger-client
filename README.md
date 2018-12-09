@@ -27,7 +27,7 @@ npm run build
 
 ## 声明
 
-本库旨在更新董启宏师兄写的 [sensor-logger](https://github.com/qhdong/sensor-logger) 库。由于年久失修，左记该库使用的一些库和框架现已无法正常使用。为了实验室的代码传承和后来者的研究方便，特将基本功能使用 vue 技术栈重新实现。本库原则上仅限东南大学 6316 实验室研究人员使用，如有其他需求，请联系 [宋宇波](mailto:songyubo@seu.edu.cn) 或 [宋睿](mailto:songrui@seu.edu.cn)，谢谢。
+本库旨在更新董启宏师兄写的 [sensor-logger](https://github.com/qhdong/sensor-logger) 库。由于年久失修，左记该库使用的一些库和框架现已无法正常使用。为了实验室的代码传承和后来者的研究方便，特将基本功能使用 vue 技术栈重新实现。本库原则上仅限东南大学 6316 实验室研究人员使用，如有其他需求，请联系 [宋宇波](mailto:songyubo@seu.edu.cn) 或 [宋睿](mailto:songrui@seu.edu.cn)，谢谢。
 
 ## 协议
 
