@@ -2,6 +2,7 @@
   <div class="container">
     <div class="col-xs-12">
       <br>
+
       <b-alert :show="alertSensorSupport" dismissible variant="danger">
         <strong>Caution!</strong>
         This device do not support inertial sensors, please open this page on your mobile devices.
