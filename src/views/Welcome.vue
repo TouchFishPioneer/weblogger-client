@@ -39,7 +39,7 @@
       >
       </b-form-input>
       <b-form-invalid-feedback id="inputFeedback">
-        Your nickname should be no more than 16 characters.
+        Your nickname should not be null or more than 16 characters.
       </b-form-invalid-feedback>
       <b-form-text id="inputHelp">
         Your full name in CN or EN.
@@ -49,12 +49,15 @@
     <br>
 
     <div class="col-xs-12">
-      <b-button variant="primary" @disabled="startButtonDisplay">START</b-button>
+      <b-button variant="primary" :disabled="startButtonDisplay" @click="login">START</b-button>
     </div>
   </div>
 </template>
 
 <script>
+import store from '../store'
+import router from '../router'
+
 export default {
   name: 'welcome',
   data () {
@@ -75,13 +78,18 @@ export default {
       } else {
         return false
       }
+    },
+    startButtonDisplay () {
+      if (this.nameState === true && this.alertSensorSupport === false) {
+        return false
+      } else {
+        return true
+      }
     }
   },
 
   methods: {
     initialize () {
-      console.log(this.nameState)
-      console.log(this.alertSensorSupport)
       if (!window.DeviceMotionEvent || !window.DeviceOrientationEvent) {
         console.log('Do not support inertial sensors.')
         this.alertSensorSupport = true
@@ -92,19 +100,16 @@ export default {
           /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
         )
       ) {
-        // console.log('mobile')
-        // console.log(navigator.userAgent)
+        console.log(navigator.userAgent)
       } else {
-        // console.log('pc')
+        console.log(navigator.userAgent)
+        console.log('pc')
       }
     },
 
-    startButtonDisplay () {
-      if (this.nameState === true && this.alertSensorSupport === false) {
-        return false
-      } else {
-        return true
-      }
+    login () {
+      store.commit('SET_NAME', this.name)
+      router.push('index')
     }
   }
 }

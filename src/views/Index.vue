@@ -44,18 +44,22 @@
 </template>
 
 <script>
+import store from '../store'
+
 export default {
   name: 'index',
   data () {
     return {
       alertSensorSupport: false,
       max: 50,
-      value: 33
+      value: 33,
+      username: ''
     }
   },
 
   created () {
     this.initialize()
+    this.getName()
   },
 
   methods: {
@@ -71,9 +75,16 @@ export default {
         )
       ) {
         console.log('mobile')
-        console.log(navigator.userAgent)
       } else {
         console.log('pc')
+      }
+    },
+
+    getName () {
+      if (localStorage.getItem('name') == null) {
+        this.username = store.state.name
+      } else {
+        this.username = localStorage.getItem('name')
       }
     }
   }
