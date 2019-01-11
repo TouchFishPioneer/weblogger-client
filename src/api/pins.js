@@ -1,8 +1,8 @@
 import request from '@/utils/requests'
 
-export function fetchArrays (params) {
+export function fetchPinArray (params) {
   return request({
-    url: '/sequence/arrays',
+    url: '/pin',
     method: 'get',
     params
   })

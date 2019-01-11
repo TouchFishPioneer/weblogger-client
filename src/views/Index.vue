@@ -17,8 +17,8 @@
       >
         <strong>PLEASE ENTER PINS</strong>
         <div>
-          <b-input-group size="lg" prepend="1823">
-            <b-form-input></b-form-input>
+          <b-input-group size="lg" :prepend="pins[progress]">
+            <b-form-input type="tel"></b-form-input>
           </b-input-group>
         </div>
 
@@ -27,8 +27,8 @@
         <div>
           <strong>OVERALL PROGRESS</strong>
           <b-progress variant="success" striped="striped" :animated="true" :max="max" height="25px">
-            <b-progress-bar :value="value">
-              <strong>{{ value }} / {{ max }}</strong>
+            <b-progress-bar :value="progress">
+              <strong>{{ progress }} / {{ max }}</strong>
             </b-progress-bar>
           </b-progress>
         </div>
@@ -37,7 +37,7 @@
 
     <div class="footer">
       <p>
-        <a href="https://herculas.cn" target="_blank">@Wurahara</a>
+        <a href="https://github.com/wurahara" target="_blank">@Wurahara</a>
       </p>
     </div>
   </div>
@@ -45,6 +45,7 @@
 
 <script>
 import store from '../store'
+import { fetchPinArray } from '../api/pins'
 
 export default {
   name: 'index',
@@ -52,40 +53,44 @@ export default {
     return {
       alertSensorSupport: false,
       max: 50,
-      value: 33,
-      username: ''
+      username: '',
+      pins: [],
+      progress: 0
     }
   },
 
-  created () {
-    this.initialize()
-    this.getName()
+  async created () {
+    await this.initialize()
+    await this.getName()
+    await this.getPins()
   },
 
   methods: {
-    initialize () {
-      if (!window.DeviceMotionEvent || !window.DeviceOrientationEvent) {
-        console.log('Do not support inertial sensors.')
-        this.alertSensorSupport = true
-      }
-
+    async initialize () {
       if (
         navigator.userAgent.match(
           /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
         )
       ) {
-        console.log('mobile')
+        this.alertSensorSupport = false
       } else {
-        console.log('pc')
+        this.alertSensorSupport = true
       }
     },
 
-    getName () {
+    async getName () {
       if (localStorage.getItem('name') == null) {
         this.username = store.state.name
       } else {
         this.username = localStorage.getItem('name')
       }
+    },
+
+    async getPins () {
+      fetchPinArray().then(async res => {
+        this.pins = res.data.pins
+        this.max = res.data.pins.length
+      })
     }
   }
 }
