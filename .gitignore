@@ -63,3 +63,4 @@ typings/
 .DS_Store
 .vscode
 dist/*
+dist.tar.gz
