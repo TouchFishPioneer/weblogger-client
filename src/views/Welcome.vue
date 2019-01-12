@@ -3,7 +3,7 @@
     <div class="col-xs-12">
       <br>
 
-      <b-alert :show="alertSensorSupport" dismissible variant="danger">
+      <b-alert :show="!supportMotionSensors" variant="danger">
         <strong>Caution!</strong>
         This device do not support inertial sensors, please open this page on your mobile devices.
       </b-alert>
@@ -32,18 +32,18 @@
       <strong>PLEASE ENTER YOUR NICKNAME</strong>
       <b-form-input
         type="text"
-        v-model.trim="name"
+        v-model="name"
         :state="nameState"
-        aria-describedby="inputFeedback inputHelp"
+        @keyup.native="inputboxCheck"
+        aria-describedby="inputFeedback"
         placeholder="Please input your nickname."
       >
       </b-form-input>
+
       <b-form-invalid-feedback id="inputFeedback">
         Your nickname should not be null or more than 16 characters.
       </b-form-invalid-feedback>
-      <b-form-text id="inputHelp">
-        Your full name in CN or EN.
-      </b-form-text>
+
     </div>
 
     <br>
@@ -63,24 +63,18 @@ export default {
   data () {
     return {
       name: '',
-      alertSensorSupport: false
+      supportMotionSensors: true,
+      nameState: null
     }
   },
 
   created () {
-    this.initialize()
+    this.sensorSupportCheck()
   },
 
   computed: {
-    nameState () {
-      if (this.name.length <= 16 && this.name.length > 0) {
-        return true
-      } else {
-        return false
-      }
-    },
     startButtonDisplay () {
-      if (this.nameState === true && this.alertSensorSupport === false) {
+      if (this.nameState === true && this.supportMotionSensors === true) {
         return false
       } else {
         return true
@@ -89,21 +83,23 @@ export default {
   },
 
   methods: {
-    initialize () {
-      if (!window.DeviceMotionEvent || !window.DeviceOrientationEvent) {
-        console.log('Do not support inertial sensors.')
-        this.alertSensorSupport = true
-      }
-
-      if (
-        navigator.userAgent.match(
-          /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
-        )
-      ) {
+    sensorSupportCheck () {
+      if (navigator.userAgent.match(
+          /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)) {
         console.log(navigator.userAgent)
+        this.supportMotionSensors = true
       } else {
         console.log(navigator.userAgent)
         console.log('pc')
+        this.supportMotionSensors = false
+      }
+    },
+
+    inputboxCheck () {
+      if (this.name.length <= 16 && this.name.length > 0) {
+        this.nameState = true
+      } else {
+        this.nameState = false
       }
     },
 
