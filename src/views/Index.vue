@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import io from 'socket.io-client'
 import store from '../store'
 import { fetchPinArray } from '../api/pins'
 
@@ -76,6 +77,7 @@ export default {
     this.sensorSupportCheck()
     this.getName()
     this.getPins()
+    this.socketTest()
   },
 
   methods: {
@@ -192,6 +194,11 @@ export default {
 
     dataDeliver (data) {
       console.log(data)
+    },
+
+    socketTest () {
+      const socket = io('http://47.101.33.187:1120')
+      socket.emit('sensor')
     }
   }
 }
