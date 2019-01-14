@@ -21,7 +21,7 @@
             <b-form-input
               type="tel"
               :state="inputboxStatus"
-              :disabled="alertSensorSupport"
+              :disabled="alertSensorSupport || inputFinishSignal"
               @focus.native="inputboxOnFocus"
               @blur.native="inputboxOnBlur"
               @keyup.native="inputboxOnKeyup"
@@ -53,9 +53,13 @@
 </template>
 
 <script>
+// import router from '../router'
+
 import io from 'socket.io-client'
+
 import store from '../store'
 import { fetchPinArray } from '../api/pins'
+import { config } from '../config/config'
 
 export default {
   name: 'index',
@@ -69,7 +73,10 @@ export default {
       keyIndex: 0,
       progress: 0,
       inputboxContent: '',
-      inputboxStatus: null
+      inputboxStatus: null,
+      socket: null,
+      sampleId: new Date().getTime(),
+      inputFinishSignal: false
     }
   },
 
@@ -77,7 +84,7 @@ export default {
     this.sensorSupportCheck()
     this.getName()
     this.getPins()
-    this.socketTest()
+    this.socketEstablish()
   },
 
   methods: {
@@ -118,6 +125,11 @@ export default {
       return array
     },
 
+    socketEstablish () {
+      let url = config.server.url + ':' + config.server.port
+      this.socket = io(url)
+    },
+
     inputboxOnFocus () {
       this.addSensorListener()
     },
@@ -133,22 +145,30 @@ export default {
     },
 
     sensorSignalHandler () {
-      if (this.inputboxContent !== this.pins[this.progress]) {
-        this.removeSensorListener()
-
-        this.inputboxContent = ''
-        this.inputboxStatus = false
+      if (this.inputboxContent === this.pins[this.progress]) {
+        if (this.progress === this.pinsCount - 1) {
+          this.removeSensorListener()
+          this.inputFinishSignal = true
+          this.inputboxContent = ''
+          this.inputboxStatus = null
+          this.progress++
+        } else {
+          this.removeSensorListener()
+          this.inputboxContent = ''
+          this.inputboxStatus = true
+          this.progress++
+          this.sampleId = new Date().getTime()
+          this.addSensorListener()
+        }
       } else {
         this.removeSensorListener()
-
+        this.rollback()
         this.inputboxContent = ''
-        this.inputboxStatus = true
-        this.progress++
+        this.inputboxStatus = false
+        this.sampleId = new Date().getTime()
+        this.addSensorListener()
       }
-
-      this.addSensorListener()
     },
-
     addSensorListener () {
       window.addEventListener('devicemotion', this.motionHandler)
       window.addEventListener('deviceorientation', this.orientationHandler)
@@ -160,7 +180,6 @@ export default {
     },
 
     motionHandler (event) {
-      console.log('motionHandler called')
       let acc = event.acceleration
       let gac = event.accelerationIncludingGravity
       let rot = event.rotationRate
@@ -182,23 +201,29 @@ export default {
     },
 
     orientationHandler (event) {
-      console.log('orientationHandler called')
       let dataPackage = {
         'ori_gamma': event.gamma,
         'ori_beta': event.beta,
         'ori_alpha': event.alpha
       }
-
       this.dataDeliver(dataPackage)
     },
 
     dataDeliver (data) {
-      console.log(data)
+      this.socket.emit('sensor', {
+        'username': this.username,
+        'sampleId': this.sampleId,
+        'pin': this.pins[this.progress],
+        'time': new Date(),
+        'data': data
+      })
     },
 
-    socketTest () {
-      const socket = io('http://47.101.33.187:1120')
-      socket.emit('sensor')
+    rollback () {
+      this.socket.emit('rollback', {
+        'sampleId': this.sampleId,
+        'pin': this.pins[this.progress]
+      })
     }
   }
 }
