@@ -19,6 +19,7 @@
         <div>
           <b-input-group size="lg" :prepend="pins[progress]">
             <b-form-input
+              id="inputbox"
               type="tel"
               :state="inputboxStatus"
               :disabled="alertSensorSupport || inputFinishSignal"
@@ -53,10 +54,8 @@
 </template>
 
 <script>
-// import router from '../router'
-
 import io from 'socket.io-client'
-
+import router from '../router'
 import store from '../store'
 import { fetchPinArray } from '../api/pins'
 import { config } from '../config/config'
@@ -76,13 +75,15 @@ export default {
       inputboxStatus: null,
       socket: null,
       sampleId: new Date().getTime(),
-      inputFinishSignal: false
+      inputFinishSignal: false,
+      inputboxClear: '',
+      userAgent: null
     }
   },
 
   created () {
     this.sensorSupportCheck()
-    this.getName()
+    this.setBasicInformation()
     this.getPins()
     this.socketEstablish()
   },
@@ -97,12 +98,13 @@ export default {
       }
     },
 
-    getName () {
+    setBasicInformation () {
       if (localStorage.getItem('name') == null) {
         this.username = store.state.name
       } else {
         this.username = localStorage.getItem('name')
       }
+      this.userAgent = navigator.userAgent
     },
 
     getPins () {
@@ -114,6 +116,7 @@ export default {
     },
 
     shuffle (array) {
+      // 将服务端返回的 pin 码序列打乱顺序
       for (let i = 1; i <= array.length; i++) {
         let j = Math.floor(Math.random() * (array.length - i)) + i
         if (j !== i) {
@@ -145,30 +148,44 @@ export default {
     },
 
     sensorSignalHandler () {
+      // 当输入值正确时
       if (this.inputboxContent === this.pins[this.progress]) {
+        // 当完成所有 pin 码输入后
         if (this.progress === this.pinsCount - 1) {
           this.removeSensorListener()
           this.inputFinishSignal = true
-          this.inputboxContent = ''
+          this.clearInputbox()
+          this.sendSuccessMessage()
           this.inputboxStatus = null
-          this.progress++
+          router.push('thanks')
         } else {
           this.removeSensorListener()
-          this.inputboxContent = ''
+          this.clearInputbox()
+          console.log(`pin: ${this.pins[this.progress]}, sampleId: ${this.sampleId}`)
           this.inputboxStatus = true
           this.progress++
           this.sampleId = new Date().getTime()
           this.addSensorListener()
         }
       } else {
+        // 当本次 pin 码输入错误时
         this.removeSensorListener()
+        this.clearInputbox()
         this.rollback()
-        this.inputboxContent = ''
+        console.log(`pin: ${this.pins[this.progress]}, sampleId: ${this.sampleId}`)
         this.inputboxStatus = false
         this.sampleId = new Date().getTime()
         this.addSensorListener()
       }
     },
+
+    clearInputbox () {
+      // 手机浏览器中使用 v-model 时常无法自动响应式更新 input 框的值
+      // 故采用 DOM 操作实现
+      document.getElementById('inputbox').value = ''
+      this.inputboxContent = ''
+    },
+
     addSensorListener () {
       window.addEventListener('devicemotion', this.motionHandler)
       window.addEventListener('deviceorientation', this.orientationHandler)
@@ -223,6 +240,15 @@ export default {
       this.socket.emit('rollback', {
         'sampleId': this.sampleId,
         'pin': this.pins[this.progress]
+      })
+    },
+
+    sendSuccessMessage () {
+      this.socket.emit('log-complete', {
+        username: this.username,
+        pinsCount: this.pinsCount,
+        pinsLength: this.pinsLength,
+        userAgent: this.userAgent
       })
     }
   }
