@@ -1,6 +1,6 @@
 # web-logger-client
 
-This client program is weitten by JavaScript based on Vue.js. You can just refer to [Vue.js](https://vuejs.org/) for help.
+This client program is written by JavaScript based on Vue.js. You can just refer to [Vue.js](https://vuejs.org/) for help.
 
 ## Introduction
 
