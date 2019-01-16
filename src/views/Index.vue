@@ -129,8 +129,7 @@ export default {
     },
 
     socketEstablish () {
-      let url = config.server.url + ':' + config.server.port
-      this.socket = io(url)
+      this.socket = io(`${config.server.url}:${config.server.port}`)
     },
 
     inputboxOnFocus () {

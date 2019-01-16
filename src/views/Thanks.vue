@@ -4,7 +4,7 @@
       <br>
 
       <b-alert show variant="success">
-        <h4 class="alert-heading">Well done!</h4>
+        <h4 class="alert-heading">Well Done!</h4>
         <p>You have completed all the work required, thank you again for your cooperation.</p>
         <hr>
         <p class="mb-0">You can exit this application by clicking the
@@ -16,8 +16,12 @@
       <br>
 
       <div>
-        <b-button variant="danger" style="margin-right: 10px" @click="exit">Exit</b-button>
-        <b-button variant="primary" @click="retry">Re-enter</b-button>
+        <b-button variant="danger" style="margin-right: 33px" @click="exit">Exit</b-button>
+        <b-button variant="success" @click="retry">Re-enter</b-button>
+      </div>
+
+      <div>
+        <b-button variant="primary"  style="margin-top: 10px"  @click="viewStatus">Examine Data Status</b-button>
       </div>
     </div>
   </div>
@@ -35,6 +39,10 @@ export default {
 
     exit () {
       router.push('/')
+    },
+
+    viewStatus () {
+      router.push('status')
     }
   }
 }

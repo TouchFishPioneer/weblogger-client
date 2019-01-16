@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import Welcome from './views/Welcome.vue'
 import Enter from './views/Index.vue'
 import Thanks from './views/Thanks.vue'
+import Status from './views/Status.vue'
 
 Vue.use(Router)
 
@@ -23,6 +24,11 @@ export default new Router({
       path: '/thanks',
       name: 'thanks',
       component: Thanks
+    },
+    {
+      path: '/status',
+      name: 'status',
+      component: Status
     }
   ]
 })

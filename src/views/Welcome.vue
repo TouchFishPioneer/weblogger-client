@@ -9,7 +9,7 @@
       </b-alert>
 
       <b-card bg-variant="primary" text-variant="white" header="WELCOME!" align="left">
-        <p>Thanks for your cooperation with the project of keystroke deduction based on inertial sensors. Before operating, please notice the following requirements:</p>
+        <p>Thanks for your cooperation with the project of keystroke deduction based on inertial sensors. Before operating, please read the following instructions:</p>
         <ul>
           <li>Please enter your nickname in the input area below. This nickname is only used to distinguish users.</li>
           <li>Once you start your input operation, please input the
@@ -36,12 +36,12 @@
         :state="nameState"
         @keyup.native="inputboxCheck"
         aria-describedby="inputFeedback"
-        placeholder="Please input your nickname."
+        placeholder="Your nickname in EN."
       >
       </b-form-input>
 
       <b-form-invalid-feedback id="inputFeedback">
-        Your nickname should not be null or more than 16 characters.
+        Your nickname should not be null or more than 8 characters.
       </b-form-invalid-feedback>
 
     </div>
@@ -49,7 +49,14 @@
     <br>
 
     <div class="col-xs-12">
-      <b-button variant="primary" :disabled="startButtonDisplay" @click="login">START</b-button>
+      <b-button
+        variant="primary"
+        :disabled="startButtonDisplay"
+        @click="login"
+        style="margin-top: 10px; margin-bottom: 10px"
+      >
+        START
+      </b-button>
     </div>
   </div>
 </template>
@@ -86,17 +93,14 @@ export default {
     sensorSupportCheck () {
       if (navigator.userAgent.match(
         /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)) {
-        console.log(navigator.userAgent)
         this.supportMotionSensors = true
       } else {
-        console.log(navigator.userAgent)
-        console.log('pc')
         this.supportMotionSensors = false
       }
     },
 
     inputboxCheck () {
-      if (this.name.length <= 16 && this.name.length > 0) {
+      if (this.name.length <= 8 && this.name.length > 0) {
         this.nameState = true
       } else {
         this.nameState = false
