@@ -64,3 +64,4 @@ typings/
 .vscode
 dist/*
 dist.tar.gz
+deploy.sh
