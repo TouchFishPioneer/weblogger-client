@@ -19,23 +19,43 @@ vuex:               ^3.0.1
 ```
 
 ## Development
+
 - Node and npm needed
 - Vue-cli 3.0 or later needed
 - Start the server end program [weblogger-server](https://github.com/wurahara/weblogger-server)
+- Download this repository to your own device
+    ```bash
+    $ git clone git@github.com:wurahara/weblogger-client.git
+    $ cd weblogger-client
+    ```
 - Configure your server IP address and port by modifying `/src/config/config.js`
+    ```JavaScript
+    let config = {
+        server: {
+            url: 'Your own address',
+            port: 'Your port'
+        }
+    }
+    ```
+- Install all the dependencies needed
+    ```bash
+    $ npm install
+    ```
 - Run the following command to start the HMR server
+    ```bash
+    $ npm run serve
     ```
-    npm run serve
-    ```
+- Open the browser, the default URL of weblogger client is `http://localhost:8080`
 
 ## Build and Deployment
 
-- Run the following command to generate the `/dist/` file
-    ```
-    npm run build
+- Nginx needed on your server
+- Run the following command on your local device to generate the `/dist/` file
+    ```bash
+    $ npm run build
     ```
 - Copy the `/dist/` file to your server
-- Configure Nginx proxy
+- Configure Nginx proxy, specific methods of which can be found in [this link](https://www.jianshu.com/p/71a0f50fe6df)
 
 ## Acknowledgement
 
