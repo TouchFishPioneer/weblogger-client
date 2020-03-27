@@ -29,18 +29,15 @@
 
 <script>
 import router from '../router'
-
 export default {
   name: 'thanks',
   methods: {
     retry () {
-      router.push('index')
+      router.push('main')
     },
-
     exit () {
       router.push('/')
     },
-
     viewStatus () {
       router.push('status')
     }

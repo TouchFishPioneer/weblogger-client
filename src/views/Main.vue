@@ -57,11 +57,10 @@
 import io from 'socket.io-client'
 import router from '../router'
 import store from '../store'
-import { fetchPinArray } from '../api/pins'
+import { fetchPins } from '../api/pin'
 import { config } from '../config/config'
-
 export default {
-  name: 'index',
+  name: 'main',
   data () {
     return {
       alertSensorSupport: false,
@@ -80,14 +79,12 @@ export default {
       userAgent: null
     }
   },
-
   created () {
     this.sensorSupportCheck()
     this.setBasicInformation()
     this.getPins()
     this.socketEstablish()
   },
-
   methods: {
     sensorSupportCheck () {
       if (navigator.userAgent.match(
@@ -97,7 +94,6 @@ export default {
         this.alertSensorSupport = true
       }
     },
-
     setBasicInformation () {
       if (localStorage.getItem('name') == null) {
         this.username = store.state.name
@@ -106,46 +102,39 @@ export default {
       }
       this.userAgent = navigator.userAgent
     },
-
     getPins () {
-      fetchPinArray().then(res => {
+      fetchPins().then(res => {
         this.pins = this.shuffle(res.data.pins)
         this.pinsCount = res.data.pins.length
         this.pinsLength = res.data.pins[0].length
       })
     },
-
     shuffle (array) {
       // 将服务端返回的 pin 码序列打乱顺序
       for (let i = 1; i <= array.length; i++) {
-        let j = Math.floor(Math.random() * (array.length - i)) + i
+        const j = Math.floor(Math.random() * (array.length - i)) + i
         if (j !== i) {
-          let temp = array[i - 1]
+          const temp = array[i - 1]
           array[i - 1] = array[j - 1]
           array[j - 1] = temp
         }
       }
       return array
     },
-
     socketEstablish () {
       this.socket = io(`${config.server.url}:${config.server.port}`)
     },
-
     inputboxOnFocus () {
       this.addSensorListener()
     },
-
     inputboxOnBlur () {
       this.removeSensorListener()
     },
-
     inputboxOnKeyup () {
       if (this.inputboxContent.length === this.pinsLength) {
         this.sensorSignalHandler()
       }
     },
-
     sensorSignalHandler () {
       // 当输入值正确时
       if (this.inputboxContent === this.pins[this.progress]) {
@@ -177,71 +166,62 @@ export default {
         this.addSensorListener()
       }
     },
-
     clearInputbox () {
       // 手机浏览器中使用 v-model 时常无法自动响应式更新 input 框的值
       // 故采用 DOM 操作实现
       document.getElementById('inputbox').value = ''
       this.inputboxContent = ''
     },
-
     addSensorListener () {
       window.addEventListener('devicemotion', this.motionHandler)
       window.addEventListener('deviceorientation', this.orientationHandler)
     },
-
     removeSensorListener () {
       window.removeEventListener('devicemotion', this.motionHandler)
       window.removeEventListener('deviceorientation', this.orientationHandler)
     },
-
     motionHandler (event) {
-      let acc = event.acceleration
-      let gac = event.accelerationIncludingGravity
-      let rot = event.rotationRate
-      let itv = event.interval
-
-      let dataPackage = {
-        'acc_x': acc.x,
-        'acc_y': acc.y,
-        'acc_z': acc.z,
-        'gacc_x': gac.x,
-        'gacc_y': gac.y,
-        'gacc_z': gac.z,
-        'rot_alpha': rot.alpha,
-        'rot_beta': rot.beta,
-        'rot_gamma': rot.gamma,
-        'interval': itv
+      const acc = event.acceleration
+      const gac = event.accelerationIncludingGravity
+      const rot = event.rotationRate
+      const itv = event.interval
+      const dataPackage = {
+        acc_x: acc.x,
+        acc_y: acc.y,
+        acc_z: acc.z,
+        gacc_x: gac.x,
+        gacc_y: gac.y,
+        gacc_z: gac.z,
+        rot_alpha: rot.alpha,
+        rot_beta: rot.beta,
+        rot_gamma: rot.gamma,
+        interval: itv
       }
       this.dataDeliver(dataPackage)
     },
-
     orientationHandler (event) {
-      let dataPackage = {
-        'ori_gamma': event.gamma,
-        'ori_beta': event.beta,
-        'ori_alpha': event.alpha
+      const dataPackage = {
+        ori_gamma: event.gamma,
+        ori_beta: event.beta,
+        ori_alpha: event.alpha
       }
       this.dataDeliver(dataPackage)
     },
-
     dataDeliver (data) {
       this.socket.emit('sensor', {
-        'username': this.username,
-        'sampleId': this.sampleId,
-        'pin': this.pins[this.progress],
-        'time': new Date(),
-        'data': data
+        username: this.username,
+        sampleId: this.sampleId,
+        pin: this.pins[this.progress],
+        time: new Date(),
+        data: data
       })
     },
-
     rollback () {
       this.socket.emit('rollback', {
-        'sampleId': this.sampleId,
-        'pin': this.pins[this.progress]
+        sampleId: this.sampleId,
+        pin: this.pins[this.progress]
       })
     },
-
     sendSuccessMessage () {
       this.socket.emit('log-complete', {
         username: this.username,

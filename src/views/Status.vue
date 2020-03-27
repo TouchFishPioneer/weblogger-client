@@ -60,7 +60,6 @@ export default {
       engineData: null
     }
   },
-
   async mounted () {
     await this.fetchData()
     this.chartOS = await this.initChart(this.$refs.ospie, this.chartColorSetter(1), this.osData, 'OS Distribution')
@@ -68,23 +67,20 @@ export default {
     this.chartEngine = await this.initChart(this.$refs.enginepie, this.chartColorSetter(3), this.engineData, 'Engine Distribution')
     await window.addEventListener('resize', this.resizeHandler)
   },
-
   destroyed () {
     window.removeEventListener('resize', this.resizeHandler)
   },
-
   methods: {
     async fetchData () {
       await fetchStatus().then(res => {
-        let status = Object.assign({}, res.data)
+        const status = Object.assign({}, res.data)
         this.osData = this.dataAssembler(status.os)
         this.venderData = this.dataAssembler(status.vender)
         this.engineData = this.dataAssembler(status.engine)
       })
     },
-
     dataAssembler (dataArray) {
-      let result = []
+      const result = []
       for (let index = 0; index < dataArray.length; index++) {
         const element = dataArray[index]
         result.push({
@@ -94,13 +90,11 @@ export default {
       }
       return result
     },
-
     resizeHandler () {
       this.chartOS.resize()
       this.chartDevice.resize()
       this.chartEngine.resize()
     },
-
     chartColorSetter (index) {
       let chartColor
       switch (index) {
@@ -119,9 +113,8 @@ export default {
       }
       return chartColor
     },
-
     initChart (chartRef, chartColor, chartData, chartName) {
-      let chartObject = echarts.init(chartRef, 'macarons')
+      const chartObject = echarts.init(chartRef, 'macarons')
       chartObject.setOption({
         tooltip: {
           trigger: 'item',
@@ -144,7 +137,6 @@ export default {
       })
       return chartObject
     },
-
     exit () {
       router.push('/')
     }

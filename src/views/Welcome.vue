@@ -64,7 +64,6 @@
 <script>
 import store from '../store'
 import router from '../router'
-
 export default {
   name: 'welcome',
   data () {
@@ -74,11 +73,9 @@ export default {
       nameState: null
     }
   },
-
   created () {
     this.sensorSupportCheck()
   },
-
   computed: {
     startButtonDisplay () {
       if (this.nameState === true && this.supportMotionSensors === true) {
@@ -88,7 +85,6 @@ export default {
       }
     }
   },
-
   methods: {
     sensorSupportCheck () {
       if (navigator.userAgent.match(
@@ -98,7 +94,6 @@ export default {
         this.supportMotionSensors = false
       }
     },
-
     inputboxCheck () {
       if (this.name.length <= 8 && this.name.length > 0) {
         this.nameState = true
@@ -106,10 +101,9 @@ export default {
         this.nameState = false
       }
     },
-
     login () {
       store.commit('SET_NAME', this.name)
-      router.push('index')
+      router.push('main')
     }
   }
 }

@@ -1,9 +1,8 @@
-import request from '@/utils/requests'
+import request from '../utils/request'
 
-export function fetchStatus (params) {
+export function fetchStatus () {
   return request({
     url: '/status',
-    method: 'get',
-    params
+    method: 'get'
   })
 }
